@@ -1,0 +1,4 @@
+(R 2)
+requires exists a (forall b (R(a,b) & exists c (R(b,c) -> forall d (~R(c,d)))))
+UPDATE R SET Column1 = x WHERE Column1 = y 
+ensures exists a (forall b (R(a,b) & exists c (R(b,c) -> forall d (~R(c,d))))) 

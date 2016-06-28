@@ -1,0 +1,14 @@
+(R 2)
+requires 
+(forall x y (R(x,y) | R(y,x))) &
+(forall x y ((R(x,y) & R(y,x)) -> (x = y))) &
+(forall x (R(h,x))) 
+
+ 
+DELETE FROM R WHERE Column1=h
+   
+ensures 
+(forall x y (R(x,y) | R(y,x) | (x = h) | (y = h))) &
+(forall x y ((R(x,y) & R(y,x)) -> (x = y))) &
+(exists y (forall x (R(x,y)))) &
+(exists y (forall x (exists z (R(x,z) | R(z,x))) -> R(x,y)))

@@ -1,0 +1,5 @@
+(R 2) (E 2) (P 1)
+requires forall a b (E(a,b) -> E(b,a)) & E(x,z) & P(x) & ~P(z) & forall a b ((P(a) & ~P(b))-> (a = x & b = z))
+DELETE FROM E WHERE Column1=x AND Column2=z
+DELETE FROM E WHERE Column1=z OR Column2=x 
+ensures forall y (R(x,y) <-> (E(x,y) | exists w (R(x,w) & E(w,y)))) -> ~R(x,z)

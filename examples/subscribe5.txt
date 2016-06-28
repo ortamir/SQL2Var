@@ -1,0 +1,13 @@
+(Users 1) (Subscriptions 2) (Letters 1)
+requires 
+forall u (Users(u) -> exists nl (Subscriptions(nl,u))) & 
+forall u nl  (Subscriptions(nl,u) -> Users(u)) &
+forall nl (Letters(nl)  -> exists u (Subscriptions(nl,u))) &
+forall u nl (Subscriptions(nl,u) -> Letters(nl)) &
+exists nl (forall u  (Users(u) -> Subscriptions(nl,u)))
+ 
+INSERT INTO Users VALUES (user) 
+INSERT INTO Subscriptions VALUES (news_letter,user) 
+   
+ensures 
+exists nl (forall u  (Users(u) -> Subscriptions(nl,u)))

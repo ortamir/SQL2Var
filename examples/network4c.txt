@@ -1,0 +1,7 @@
+(Devices 1) (CanSend 2)
+requires exists d2 ((~(d2 = device_to_delete)) && (Devices(d2)) && forall d1 (Devices(d1) -> CanSend(d1,d2)))
+DELETE FROM CanSend WHERE Column1=device_to_delete OR Column2=device_to_delete
+DELETE FROM Devices WHERE Column1=device_to_delete
+ensures exists d2 (Devices(d2) && forall d1 (Devices(d1)  -> CanSend(d1,d2)))
+
+

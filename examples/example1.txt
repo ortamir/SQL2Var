@@ -1,0 +1,61 @@
+TABLES
+newsletter_addresses: nwl,address,subscribed,confirm_code
+newsletter_mails: nwl,id,text,sent (maybe more columns)
+
+subscribe(nl,email){
+
+N = SELECT * FROM newsletter_addresses WHERE nwl = nl;
+
+if (N = empty) exit; //nl does not exit
+
+A = SELECT * FROM newsletter_addresses WHERE address = email AND nwl = nl;
+
+if (A != empty) exit; //email already subscribe to nl
+
+code = newUniqueId();
+
+INSERT (nl,email,false,code) INTO newsletter_addresses;
+
+} //subscribe
+
+unsubscribe(nl,email){
+
+N = SELECT * FROM newsletter_addresses WHERE nwl = nl;
+
+if (N = empty) exit; //nl does not exit
+
+A = SELECT * FROM newsletter_addresses WHERE address = email AND nwl = nl;
+
+if (A != empty) exit; //email not subscribed to nl
+
+code = newUniqueId();
+
+UPDATE newsletter_addresses SET confirm_code = code WHERE nwl = nl AND address = email;
+
+} // unsubscribe
+
+confirm(code) {
+
+row = CHOOSE FROM SELECT * FROM newsletter_addresses WHERE confirm_code = code;
+
+if (row.subscribed = false)
+  
+ UPDATE newsletter_addresses SET subscribed = true, confirm_code = NULL WHERE confirm_code = code;
+
+else
+
+ DELETE FROM newsletter_addresses WHERE confirm_code = code;
+
+} //confirm
+
+send_mass_email(eid,nwl) {
+
+E = SELECT address FROM newsletter_addresses WHERE subscribed = true AND nwl = nl;
+
+body = CHOOSE FROM SELECT text FROM newsletter_mails WHERE nwl = nl AND eid = id;
+
+//sendEmails(E,body)
+
+UPDATE newsletter_mails SET sent = true WHERE nwl = nl AND eid = id;
+
+} // send_mass_email

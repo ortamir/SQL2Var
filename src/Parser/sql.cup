@@ -1,0 +1,360 @@
+package Parser;
+
+import java_cup.runtime.*;
+import AST.*;
+import java.util.Vector;
+import java.util.HashMap;
+import java.util.Map;
+import AST.Schema.TableDef;
+
+parser code  {:
+	/** Causes the parsr to print every token it reads.
+	 * This is useful for debugging.
+	 */
+	public boolean printTokens;
+	
+	private Lexer lexer;
+
+	public SqlCup(Lexer lexer) {
+		super(lexer);
+		this.lexer = lexer;
+	}
+	
+	public int getLine() {
+		return lexer.getLineNumber();
+	}
+	
+	public void syntax_error(Symbol s) {
+		Token tok = (Token) s;
+		System.out.println("Line " + tok.getLine()+": Syntax error; unexpected " + tok);
+	}
+:}
+
+// This is just for debugging
+scan with {:
+	Token t = lexer.next_token();
+	if (printTokens)
+		System.out.println(t.getLine() + ":" + t);
+	return t; 
+:};
+
+terminal SELECT,UPDATE,DELETE,MOVE,INSERT,VALUES,FROM,WHERE,AND,OR,ISEMPTY,ISNOTEMPTY,SET,INTO,STAR,LPAREN,RPAREN,EQ,DOT,COMMA,NOT,LAND,LOR,FORALL,EXISTS,REQUIRES,ENSURES,IMPLIES,IFF,NEQ,BOUNDED,CHOOSE,IF,ELSE,SEMICOLON,SKIP,COLON;
+//,CHOOSE,TABLES,IF,NEWUNIQUEID,COLON;
+
+terminal String ID;
+terminal Integer NUMBER;
+//terminal String STRING;
+
+non terminal Query query;
+non terminal Condition cond;
+non terminal Columns clmns;
+non terminal Assignment asn;
+//non terminal Value value;
+non terminal SelectColumn selectCol;
+non terminal Formula formula;
+non terminal Vector<Var> variables;
+non terminal Vector<Var> termList;
+non terminal Vector<Query> queryList;
+non terminal Vector<Integer> numList;
+non terminal Program program;
+non terminal Relation atom;
+non terminal Var term;
+non terminal Map<String,TableDef> tables;
+non terminal Vector<Stmt> stmts;
+non terminal Stmt stmt;
+//non terminal Vector<Var> idList;
+
+precedence left OR;
+precedence left AND;
+
+precedence left IFF;
+precedence left IMPLIES;
+precedence left LOR;
+precedence left LAND;
+precedence left NOT;
+
+program ::=  tables:t REQUIRES formula:f1 stmts:sl ENSURES formula:f2
+	{: RESULT = new Program(t,f1,sl,f2); :}
+;
+
+stmts ::= stmt:s SEMICOLON 
+	{:  
+		Vector<Stmt> v = new Vector<Stmt>();
+		v.add(s);
+		RESULT = v;
+	 :}
+;
+
+stmts ::= stmts:sl stmt:s SEMICOLON  
+	{:  
+		sl.add(s);
+		RESULT = sl;
+	 :}
+;
+
+stmt ::= query:q 
+	{:
+		RESULT = new QuerySTMT(q);	
+	:}
+;
+
+stmt ::= SKIP 
+	{:
+		RESULT = new SkipStmt();	
+	:}
+;
+
+stmt ::= ID:v EQ query:q 
+	{:
+		RESULT = new AssignSTMT(v,q);	
+	:}
+;
+
+stmt ::= IF LPAREN ISEMPTY LPAREN query:q RPAREN RPAREN stmts:s1 ELSE stmts:s2 
+	{:
+		RESULT = new IfSTMT(0,q,s1,s2);	
+	:}
+;
+
+stmt ::= IF LPAREN ISNOTEMPTY LPAREN query:q RPAREN RPAREN stmts:s1 ELSE stmts:s2 
+	{:
+		RESULT = new IfSTMT(1,q,s1,s2);	
+	:}
+;
+
+stmt ::= IF LPAREN ISEMPTY  query:q  RPAREN stmts:s1 ELSE stmts:s2 
+	{:
+		RESULT = new IfSTMT(0,q,s1,s2);	
+	:}
+;
+
+stmt ::= IF LPAREN  ISNOTEMPTY query:q  RPAREN stmts:s1 ELSE stmts:s2 
+	{:
+		RESULT = new IfSTMT(1,q,s1,s2);	
+	:}
+;
+
+stmt ::= IF LPAREN ID:v EQ term:n RPAREN stmts:s1 ELSE stmts:s2 
+	{:
+		RESULT = new IfSTMT(3,v,n,s1,s2);	
+	:}
+;
+
+stmt ::= ID:v EQ CHOOSE query:q 
+	{:
+		RESULT = new ChooseSTMT(v,q);	
+	:}
+;
+
+tables ::= 
+	{: RESULT = new HashMap<>(); :}
+;
+
+tables ::= LPAREN ID:table NUMBER:n RPAREN  tables:t
+	{: t.put(table, new TableDef(n));
+	   RESULT = t;
+	 :}
+;
+
+tables ::= LPAREN ID:table NUMBER:n BOUNDED numList:nl RPAREN  tables:t
+	{: t.put(table, new TableDef(n,nl));
+	   RESULT = t;
+	 :}
+;
+
+numList ::= NUMBER:n
+	{:
+		Vector<Integer> v = new Vector<Integer>();
+		v.add(n);
+		RESULT = v;
+	:}
+;
+
+numList ::= NUMBER:n numList:nl
+	{:
+		nl.add(0, n);
+		RESULT = nl;
+	:}
+;
+
+/*
+idList ::= ID:id
+	{:
+		Vecotr<Var> vec = new Vector<>();
+		vec.add(id);
+		RESULT = vec;
+	:}
+;
+
+idList ::= ID:id COMMA idList:idl
+	{:
+		idl.add(id);
+		RESULT = idl;
+	:}
+;
+*/
+formula ::= atom:at
+	{: RESULT = new RelationFormula(at); :}
+;
+
+formula ::= 	
+         LPAREN formula:f RPAREN
+	{: RESULT = f; :}
+;
+
+formula ::= NOT formula:f
+	{: RESULT = new NegationFormula(f); :}
+;
+
+formula ::= formula:f1 LAND formula:f2
+	{: RESULT = new AndFormula(f1,f2); :}
+;
+
+
+formula ::=  formula:f1 LOR formula:f2
+{: RESULT = new OrFormula(f1,f2); :}
+;
+
+formula ::=  formula:f1 IMPLIES formula:f2
+{: RESULT = new ImpliesFormula(f1,f2); :}
+; 
+
+formula ::=  formula:f1 IFF formula:f2
+{: RESULT = new IffFormula(f1,f2); :}
+;
+
+formula ::=  FORALL variables:vs LPAREN formula:f RPAREN
+{: RESULT = new ForAllFormula(vs,f); :}
+;
+
+formula ::=  EXISTS variables:vs LPAREN formula:f RPAREN
+{: RESULT = new ExistsFormula(vs,f); :}
+;
+
+term ::= ID:id
+	{: RESULT = new Var(id); :}
+;
+
+term ::= NUMBER:n
+	{: RESULT = new Var(n); :}
+;  
+
+term ::= NUMBER:n COLON NUMBER:l
+	{: RESULT = new Var(n, l); :}
+;  
+
+atom ::= ID:id 
+	{: RESULT = new Relation(id,new Vector<Var>()); :}
+;
+
+atom ::= ID:id LPAREN termList:tl RPAREN
+	{: RESULT = new Relation(id,tl); :}
+;
+
+atom ::= term:t1 EQ term:t2
+	{: 
+	Vector<Var> vec = new Vector<>();
+	vec.add(t1);
+	vec.add(t2);
+	
+	RESULT = new Relation("=",vec); 
+	:}
+; 
+
+atom ::= term:t1 NEQ term:t2
+	{: 
+	Vector<Var> vec = new Vector<>();
+	vec.add(t1);
+	vec.add(t2);
+	
+	RESULT = new Relation("!=",vec); 
+	:}
+;   
+     
+termList ::= term:t
+	{: 
+	Vector<Var> vec = new Vector<Var>();
+	vec.add(t);
+	RESULT = vec; :}
+;
+
+termList ::= term:t COMMA termList:tl
+	{: tl.insertElementAt(t,0);
+	   RESULT = tl;
+	 :}
+;
+
+variables ::=  
+	{: RESULT = new Vector<Var>(); :}
+;
+
+variables ::= ID:var variables:vs
+	{: vs.insertElementAt(new Var(var),0);
+	   RESULT = vs;
+	 :}
+;
+
+queryList ::= 
+	{: RESULT = new Vector<Query>(); :}
+;
+	
+queryList ::=  queryList:ql query:q
+	{: ql.add(q);
+	   RESULT = ql; :}	
+;
+
+query ::= SELECT ID:v1 DOT clmns:cl FROM ID:v2 WHERE cond:c
+	{: RESULT = new SelectQuery(v1,cl,v2,c); :};
+
+query ::= UPDATE ID:v1 SET asn:a WHERE cond:c
+	{: RESULT = new UpdateQuery(v1,a,c); :};
+
+query ::= DELETE FROM ID:v1 WHERE cond:c
+	{: RESULT = new DeleteQuery(v1,c); :};
+
+query ::= MOVE FROM ID:v1 INTO ID:v2 WHERE cond:c
+	{: RESULT = new MoveQuery(v1,null,v2,null,c); :};
+	
+query ::= MOVE FROM ID:v1 DOT clmns:cl INTO ID:v2 DOT clmns:cl2 WHERE cond:c
+	{: RESULT = new MoveQuery(v1,cl,v2,cl2,c); :};
+	
+query ::= MOVE FROM ID:v1 INTO ID:v2 DOT clmns:cl2 WHERE cond:c
+	{: RESULT = new MoveQuery(v1,null,v2,cl2,c); :};
+	
+query ::= MOVE FROM ID:v1 DOT clmns:cl INTO ID:v2 WHERE cond:c
+	{: RESULT = new MoveQuery(v1,cl,v2,null,c); :};
+	
+query ::= INSERT INTO ID:v1 VALUES LPAREN termList:tl RPAREN
+	{: RESULT = new InsertQuery(v1,tl); :};
+	
+clmns ::= ID:c1 COMMA ID:c2
+	{: RESULT = new TwoColumns(c1,c2); :};
+	
+clmns ::= ID:c
+	{: RESULT = new OneColumn(c); :};
+	
+clmns ::= STAR
+	{: RESULT = new StarColumns(); :};
+
+cond ::= cond:c1 AND cond:c2
+	{: RESULT = new AndCondition(c1, c2); :};
+	
+cond ::= cond:c1 OR cond:c2
+	{: RESULT = new OrCondition(c1, c2); :};
+
+cond ::= ID:c EQ term:v
+	{: RESULT = new EQCondition(c, v); :};
+
+cond ::= ISEMPTY LPAREN selectCol:sc RPAREN
+	{: RESULT = new isEmptyCondition(sc); :};
+	
+cond ::= ISNOTEMPTY LPAREN selectCol:sc RPAREN
+	{: RESULT = new isNotEmptyCondition(sc); :};
+
+selectCol ::= SELECT ID:t DOT ID:col FROM ID:t2 WHERE cond:c
+	{: RESULT = new SelectColumn(t,col,t2,c); :} ;
+
+asn ::= ID:col EQ term:v
+	{: RESULT = new Assignment(col,v); :} ;
+		
+

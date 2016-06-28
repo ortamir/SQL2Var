@@ -1,0 +1,4 @@
+(Users 1) (Subscriptions 2)
+requires exists nl (forall u (Users(u) -> Subscriptions(nl,u))) 
+INSERT INTO Subscriptions VALUES (event_nl,event_user)
+ensures exists nl (forall u (Users(u) -> Subscriptions(nl,u))) 

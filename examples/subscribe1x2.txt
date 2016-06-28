@@ -1,0 +1,46 @@
+(declare-sort V 0)
+(declare-fun Subscriptions (V V) Bool)
+(declare-fun Users (V) Bool)
+(declare-const user2 V)
+(declare-const news_letter V)
+(declare-const news_letter2 V)
+(declare-const user V)
+(assert 
+	(not 
+		(=> 
+			(and 
+				(forall ((x V)) (=> (forall ((y V)) (Subscriptions y x)) (exists ((y V)) (Subscriptions y x)))) 
+				(forall ((x V)) (=> (forall ((y V)) (Subscriptions y x)) (exists ((y V)) (Subscriptions y x))))
+			)
+			(forall ((x V)) 
+				(=> (forall ((y V)) 
+						(or 
+							(or 
+								(Subscriptions y x) 
+									(and (= y news_letter) (= x user))
+							) 
+							(and 
+								(= y news_letter2) 
+								(= x user2)
+							)
+						)
+					) 
+					(exists ((y V)) 
+						(or 
+							(or 
+								(Subscriptions y x) 
+								(and (= y news_letter) (= x user))
+							) 
+							(and 
+								(= y news_letter2) 
+								(= x user2)
+							)
+						)
+					)
+				)
+			)
+		)
+	)
+)
+(check-sat)
+(get-model)
