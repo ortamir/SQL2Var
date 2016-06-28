@@ -1,0 +1,28 @@
+(NS 2 BOUNDED 2 3) (NSgho 2 BOUNDED 2 3)
+requires 
+(forall x y (forall s (forall c  (NS(x,y,s,c) <-> NSgho(x,y,s,c))))) & 
+((subgho=0:2) | (subgho=1:2)) & 
+forall x y (forall s1 s2  (forall c1 c2  ((s1 = s2 && c1 = c2) | ~(NS(x,y,s1,c1)) | ~(NS(x,y,s2,c2)))))
+
+if (IsNotEmpty(SELECT NS.b0 FROM NS WHERE b1 = cd))  //"No such code"
+     flag = CHOOSE SELECT NS.b0 FROM NS WHERE b1 = cd;
+     if (subgho = 0:2) 
+          UPDATE NS SET b0 = 1:2 WHERE b1 = cd;
+          UPDATE NS SET b1 = 0:3 WHERE b1 = cd;
+     else 
+          DELETE FROM NS WHERE b1 = cd;
+     ;
+else
+     skip;
+;
+ensures 
+(subgho = 0:2) -> (
+(forall x y  (forall s  (forall c  (NS(x,y,s,c) <->
+((~(cd = c) & NSgho(x,y,s,c))  | (
+c = 0:3 & s = 1:2 & exists s0 c0 (cd = c0 & NSgho(x,y,s0,c0)))))))))
+&
+(subgho = 1:2) -> (
+(forall x y  (forall s  (forall c  (NS(x,y,s,c) <->
+(~(cd = c) & NSgho(x,y,s,c))
+)))))
+& forall x y (forall s1 s2  (forall c1 c2  ((s1 = s2 && c1 = c2) | ~(NS(x,y,s1,c1)) | ~( NS(x,y,s2,c2)))))

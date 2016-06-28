@@ -1,0 +1,27 @@
+(NS 2 BOUNDED 2 3) (NSgho 2 BOUNDED 2 3)
+requires
+~(0 = 1) & ~(0 = 2) & ~(1 = 2) &
+forall x y (forall s (forall c (NS(x,y,s,c) <->
+NSgho(x,y,s,c)))) & 
+((new_code=1) | (new_code=2)) &
+forall x y 
+(forall s 
+(~(NS(x,y,s,new_code)))
+) & 
+forall x y  (forall s1 s2 (forall c1 c2 
+ ((s1 = s2 && c1 = c2) || (~ NS(x,y,s1,c1)) || (~ NS(x,y,s2,c2)))))
+
+if (
+IsEmpty ( SELECT NS.Column1 FROM NS WHERE Column1 = u AND Column2 = n ) 
+)
+     INSERT INTO NS VALUES (n,u,0,new_code) ;
+// Send confirmation email to u
+else
+     skip ; // "This address is already registered to this newsletter."
+;
+ensures 
+forall x y (forall s (forall c (NS(x,y,s,c) <->
+(NSgho(x,y,s,c) | (n = x & u = y & s = 0 & c = new_code &
+~ (exists s_prime (exists c_prime (NSgho(n,u,s_prime,c_prime))))))))) & 
+forall x y  (forall s1 s2 (forall c1 c2 
+ ((s1 = s2 && c1 = c2) || (~ NS(x,y,s1,c1)) || (~ NS(x,y,s2,c2)))))

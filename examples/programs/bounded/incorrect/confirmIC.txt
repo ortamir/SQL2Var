@@ -1,0 +1,32 @@
+(NS 2 BOUNDED 2 3) (NSgho 2 BOUNDED 2 3)
+requires 
+(forall x y (forall s (forall c(NS(x,y,s,c) <->
+NSgho(x,y,s,c))))) & 
+B(subgho) & 
+forall x y (forall s1 s2 (forall c1 c2  ((s1 = s2 & c1 = c2) | (~ NS(x,y,s1,c1)) || (~ NS(x,y,s2,c2)))))
+
+
+if (IsNotEmpty (SELECT NS.b0 FROM NS WHERE b1 = cd)) 
+    s1 = CHOOSE SELECT NS.b0 FROM NS WHERE b1 = cd;
+    if (s1 = 0) 
+         UPDATE NS SET b1 = 1 WHERE b1 = cd ;
+         UPDATE NS SET b0 = 0 WHERE b1 = cd ;
+    else
+         skip;
+    ;
+else 
+    DELETE FROM NS WHERE b1 = cd;
+;
+
+ensures (
+subgho = 1 -> (
+(forall x y (forall s (forall c (NS(x,y,s,c) <->
+((~(cd = c) & NSgho(x,y,s,c))  | 
+(c = 0 && s = 1 && NSgho(x,y,0,cd))))))))
+&
+subgho = 0 -> (
+(forall x y (forall s(forall c (NS(x,y,s,c) <->
+(~(cd = c) & NSgho(x,y,s,c))
+))))))
+& 
+forall x y (forall s1 s2 (forall c1 c2  ((s1 = s2 & c1 = c2) | (~ NS(x,y,s1,c1)) || (~ NS(x,y,s2,c2)))))
