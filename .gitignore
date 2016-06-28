@@ -1,4 +1,8 @@
 src/Parser/Lexer.java
 src/Parser/SqlCup.java
+<<<<<<< HEAD
 src/Parser/SqlSym.java
 *.class
+=======
+src/Parser/SqlSym.java
+>>>>>>> 6513bf367dba7b9a9d604e466f325d6e290133f8
