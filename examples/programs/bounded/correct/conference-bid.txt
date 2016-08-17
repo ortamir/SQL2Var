@@ -1,0 +1,13 @@
+(Papers 1 BOUNDED 3) (Reviews 2)  (Reviewers 2 BOUNDED 2) (Conflicts 2)
+requires
+forall u p b (Reviewers(u, p, b) -> ~ Conflicts(u, p)) &&
+forall u p (Reviews(u, p) -> ~ Conflicts(u, p))
+
+if (IsEmpty(SELECT Conflicts.Column1 FROM Conflicts WHERE Column1=usid AND Column2=papid))
+  INSERT INTO Reviewers VALUES (usid, papid, 0:2);
+else
+  skip ;
+;
+ensures
+ forall u p b (Reviewers(u, p, b) -> ~ Conflicts(u, p)) &&
+forall u p (Reviews(u, p) -> ~ Conflicts(u, p))

@@ -24,6 +24,7 @@ public static class TableDef{
 	public TableDef(int numColumns) {
 		super();
 		this.numColumns = numColumns;
+		this.boundedColumns = new Vector<>();
 	}
 
 	public TableDef(String n) {
@@ -64,9 +65,11 @@ public static class TableDef{
 	
 	private String vector2FormatedString(Vector<Integer> v) {
 		String ret="";
-		ret+=v.elementAt(0).intValue();
-		for(int i=1;i<v.size();i++)
-			ret+="_"+v.elementAt(i).intValue();
+		if (!v.isEmpty()) {
+			ret+=v.elementAt(0).intValue();
+			for(int i=1;i<v.size();i++)
+				ret+="_"+v.elementAt(i).intValue();
+		}
 		return ret;
 	}
 

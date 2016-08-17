@@ -36,7 +36,7 @@ public class ReplaceVisitor extends CloneVisitor{
 			if(t.boundedColumns != null)
 				s=t.boundedColumns.size();
 			if(s+t.numColumns != relationFormula.relation.terms.size())
-				throw new RuntimeException("Unmactched table "+relationName+" arguments got:"+relationFormula.relation.terms.size()+" excepected:"+s+t.numColumns);
+				throw new RuntimeException("Unmactched table "+relationName+" arguments got:"+relationFormula.relation.terms.size()+" excepected:"+(s+t.numColumns));
 			switch(t.numColumns){
 			case 1:
 				m.put(new Var("alpha"), relationFormula.relation.terms.get(0));

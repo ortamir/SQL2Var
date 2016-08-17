@@ -47,6 +47,7 @@ NUMBER=[1-9][0-9]*|[0]
 "IsNotEmpty"	{ return new Token(yyline, yytext(), SqlSym.ISNOTEMPTY); }
 "SET" 			{ return new Token(yyline, yytext(), SqlSym.SET); }
 "INTO" 			{ return new Token(yyline, yytext(), SqlSym.INTO); }
+"IN" 			{ return new Token(yyline, yytext(), SqlSym.IN); }
 "BOUNDED" 		{ return new Token(yyline, yytext(), SqlSym.BOUNDED); }
 "CHOOSE" 		{ return new Token(yyline, yytext(), SqlSym.CHOOSE); }
 "skip" 		{ return new Token(yyline, yytext(), SqlSym.SKIP); }

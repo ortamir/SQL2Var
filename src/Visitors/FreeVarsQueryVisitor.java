@@ -5,12 +5,14 @@ import java.util.HashSet;
 
 import AST.AndCondition;
 import AST.Assignment;
+import AST.BoolCondition;
 import AST.DeleteQuery;
 import AST.EQCondition;
 import AST.Formula;
 import AST.FreeVarsNode;
 import AST.InsertQuery;
 import AST.MoveQuery;
+import AST.NEQCondition;
 import AST.OneColumn;
 import AST.OrCondition;
 import AST.SelectColumn;
@@ -20,6 +22,7 @@ import AST.TwoColumns;
 import AST.UpdateQuery;
 import AST.Value;
 import AST.Var;
+import AST.inCondition;
 import AST.isEmptyCondition;
 import AST.isNotEmptyCondition;
 
@@ -85,6 +88,13 @@ public class FreeVarsQueryVisitor implements QueryVisitor {
 		f.set.add(eqCondition.value);
 		return f;
 	}
+	
+	@Override
+	public Object visit(NEQCondition neqCondition) {
+		FreeVarsNode f = new FreeVarsNode(new HashSet<>());
+		f.set.add(neqCondition.value);
+		return f;
+	}
 
 	@Override
 	public Object visit(Assignment assignment) {
@@ -114,6 +124,19 @@ public class FreeVarsQueryVisitor implements QueryVisitor {
 	public Object visit(InsertQuery insertQuery) {
 		FreeVarsNode f = new FreeVarsNode(new HashSet<>());
 		f.set.addAll(insertQuery.terms);
+		return f;
+	}
+
+	@Override
+	public Object visit(inCondition inCondition) {
+		FreeVarsNode f = (FreeVarsNode)inCondition.sc.accept(this);
+		return f.set.remove(new Var("Column1"));
+	}
+
+	@Override
+	public Object visit(BoolCondition boolCondition) {
+		// TODO Auto-generated method stub
+		FreeVarsNode f = new FreeVarsNode(new HashSet<>());
 		return f;
 	}
 

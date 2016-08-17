@@ -4,6 +4,7 @@ import java.util.Vector;
 
 import AST.AndCondition;
 import AST.Assignment;
+import AST.BoolCondition;
 import AST.Columns;
 import AST.Condition;
 import AST.DeleteQuery;
@@ -11,8 +12,10 @@ import AST.EQCondition;
 import AST.Formula;
 import AST.InsertQuery;
 import AST.MoveQuery;
+import AST.NEQCondition;
 import AST.OneColumn;
 import AST.OrCondition;
+import AST.Query;
 import AST.SelectColumn;
 import AST.SelectQuery;
 import AST.StarColumns;
@@ -20,6 +23,7 @@ import AST.TwoColumns;
 import AST.UpdateQuery;
 import AST.Value;
 import AST.Var;
+import AST.inCondition;
 import AST.isEmptyCondition;
 import AST.isNotEmptyCondition;
 
@@ -104,6 +108,22 @@ public class CloneQueryVisitor implements QueryVisitor {
 	@Override
 	public Object visit(InsertQuery insertQuery) {
 		return new InsertQuery(insertQuery.table,(Vector<Var>) insertQuery.terms.clone());
+	}
+
+	@Override
+	public Object visit(inCondition inCondition) {
+		return new inCondition(inCondition.column,(Query)inCondition.sc.accept(this));
+	}
+
+	@Override
+	public Object visit(BoolCondition boolCondition) {
+		return new BoolCondition(boolCondition.c);
+	}
+
+	@Override
+	public Object visit(NEQCondition neqCondition) {
+		// TODO Auto-generated method stub
+		return new NEQCondition(neqCondition.column,neqCondition.value);
 	}
 
 }

@@ -7,13 +7,16 @@ import java.util.Vector;
 import AST.AndCondition;
 import AST.AndFormula;
 import AST.Assignment;
+import AST.BoolCondition;
 import AST.DeleteQuery;
 import AST.EQCondition;
 import AST.ExistsFormula;
 import AST.Formula;
+import AST.FreeVarsNode;
 import AST.IdGenerator;
 import AST.InsertQuery;
 import AST.MoveQuery;
+import AST.NEQCondition;
 import AST.NegationFormula;
 import AST.OneColumn;
 import AST.OrCondition;
@@ -28,6 +31,7 @@ import AST.TwoColumns;
 import AST.UpdateQuery;
 import AST.Value;
 import AST.Var;
+import AST.inCondition;
 import AST.isEmptyCondition;
 import AST.isNotEmptyCondition;
 
@@ -201,5 +205,64 @@ public class ConditionVisitor implements QueryVisitor{
 	public Object visit(InsertQuery insertQuery) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public Object visit(inCondition inCondition) {
+		
+		Var column;
+		
+		switch(inCondition.column){
+		case "Column1":
+			column = new Var("alpha");
+		break;
+		case "Column2":
+			column = new Var("beta");
+		break;
+		default:
+			if(inCondition.column.startsWith("b"))// bounded column
+				column = new Var("l"+inCondition.column.substring(1, inCondition.column.length()));
+			else
+				throw new RuntimeException("undefined column "+inCondition.column);
+			
+		
+		}
+		
+		Formula f = (Formula) inCondition.sc.accept(this);
+		Var v = ((FreeVarsNode)f.accept(new FreeVarsVisitor())).set.iterator().next();
+		Map<Var,Var> m = new HashMap<Var,Var>();
+		
+		m.put(v, column);
+		
+		return f.accept(new RenameVisitor(m));
+	}
+
+	@Override
+	public Object visit(BoolCondition boolCondition) {
+		// TODO Auto-generated method stub
+		return new BoolCondition(boolCondition.c);
+	}
+
+	@Override
+	public Object visit(NEQCondition neqCondition) {
+		// TODO Auto-generated method stub
+				Vector<Var> vec = new Vector<Var>();
+				switch(neqCondition.column){
+				case "Column1":
+					vec.add(new Var("alpha"));
+				break;
+				case "Column2":
+					vec.add(new Var("beta"));
+				break;
+				default:
+					if(neqCondition.column.startsWith("b"))// bounded column
+						vec.add(new Var("l"+neqCondition.column.substring(1, neqCondition.column.length())));
+					else
+						throw new RuntimeException("undefined column "+neqCondition.column);
+					
+				
+				}
+				vec.add(neqCondition.value);
+				return new NegationFormula( new RelationFormula(new Relation("=",vec)));
 	}
 }

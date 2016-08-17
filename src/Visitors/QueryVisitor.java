@@ -2,11 +2,13 @@ package Visitors;
 
 import AST.AndCondition;
 import AST.Assignment;
+import AST.BoolCondition;
 import AST.DeleteQuery;
 import AST.EQCondition;
 import AST.Formula;
 import AST.InsertQuery;
 import AST.MoveQuery;
+import AST.NEQCondition;
 import AST.OneColumn;
 import AST.OrCondition;
 import AST.SelectColumn;
@@ -15,6 +17,7 @@ import AST.StarColumns;
 import AST.TwoColumns;
 import AST.UpdateQuery;
 import AST.Value;
+import AST.inCondition;
 import AST.isEmptyCondition;
 import AST.isNotEmptyCondition;
 
@@ -51,4 +54,10 @@ public interface QueryVisitor {
 	Object visit(isEmptyCondition isEmptyCondition);
 
 	Object visit(InsertQuery insertQuery);
+	
+	Object visit(inCondition inCondition);
+
+	Object visit(BoolCondition boolCondition);
+
+	Object visit(NEQCondition neqCondition);
 }

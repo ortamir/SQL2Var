@@ -38,7 +38,7 @@ scan with {:
 	return t; 
 :};
 
-terminal SELECT,UPDATE,DELETE,MOVE,INSERT,VALUES,FROM,WHERE,AND,OR,ISEMPTY,ISNOTEMPTY,SET,INTO,STAR,LPAREN,RPAREN,EQ,DOT,COMMA,NOT,LAND,LOR,FORALL,EXISTS,REQUIRES,ENSURES,IMPLIES,IFF,NEQ,BOUNDED,CHOOSE,IF,ELSE,SEMICOLON,SKIP,COLON;
+terminal SELECT,UPDATE,DELETE,MOVE,INSERT,VALUES,FROM,WHERE,AND,OR,ISEMPTY,ISNOTEMPTY,SET,INTO,STAR,LPAREN,RPAREN,EQ,DOT,COMMA,NOT,LAND,LOR,FORALL,EXISTS,REQUIRES,ENSURES,IMPLIES,IFF,NEQ,BOUNDED,CHOOSE,IF,ELSE,SEMICOLON,SKIP,COLON,IN;
 //,CHOOSE,TABLES,IF,NEWUNIQUEID,COLON;
 
 terminal String ID;
@@ -305,6 +305,9 @@ queryList ::=  queryList:ql query:q
 
 query ::= SELECT ID:v1 DOT clmns:cl FROM ID:v2 WHERE cond:c
 	{: RESULT = new SelectQuery(v1,cl,v2,c); :};
+	
+query ::= SELECT ID:v1 DOT clmns:cl FROM ID:v2
+	{: RESULT = new SelectQuery(v1,cl,v2,new BoolCondition(true)); :};
 
 query ::= UPDATE ID:v1 SET asn:a WHERE cond:c
 	{: RESULT = new UpdateQuery(v1,a,c); :};
@@ -344,12 +347,19 @@ cond ::= cond:c1 OR cond:c2
 
 cond ::= ID:c EQ term:v
 	{: RESULT = new EQCondition(c, v); :};
+	
+cond ::= ID:c NEQ term:v
+	{: RESULT = new NEQCondition(c, v); :};
 
 cond ::= ISEMPTY LPAREN selectCol:sc RPAREN
 	{: RESULT = new isEmptyCondition(sc); :};
 	
 cond ::= ISNOTEMPTY LPAREN selectCol:sc RPAREN
 	{: RESULT = new isNotEmptyCondition(sc); :};
+
+cond ::= ID:c IN LPAREN query:q RPAREN
+    {: RESULT = new inCondition(c,q); :};
+    
 
 selectCol ::= SELECT ID:t DOT ID:col FROM ID:t2 WHERE cond:c
 	{: RESULT = new SelectColumn(t,col,t2,c); :} ;

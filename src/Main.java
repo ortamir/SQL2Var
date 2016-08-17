@@ -26,19 +26,7 @@ public class Main {
 
 	public static final boolean DEBUG = true;
 
-	public static final String HARD_CODED_DECLARATIONS = 
-	"(declare-fun NS_0_0 (V V) Bool)\n" +
-	"(declare-fun NS_0_1 (V V) Bool)\n" +
-	"(declare-fun NS_0_2 (V V) Bool)\n" +
-	"(declare-fun NS_1_0 (V V) Bool)\n" +
-	"(declare-fun NS_1_1 (V V) Bool)\n" +
-	"(declare-fun NS_1_2 (V V) Bool)\n" +
-	"(declare-fun NSgho_0_0 (V V) Bool)\n" +
-	"(declare-fun NSgho_0_1 (V V) Bool)\n" +
-	"(declare-fun NSgho_0_2 (V V) Bool)\n" +
-	"(declare-fun NSgho_1_0 (V V) Bool)\n" +
-	"(declare-fun NSgho_1_1 (V V) Bool)\n" +
-	"(declare-fun NSgho_1_2 (V V) Bool)\n";
+	
 
 	static CommandLine cmdline(String[] args) {
 		try {
