@@ -1,16 +1,12 @@
-(Papers 1 BOUNDED 3) (Reviews 2)  (Reviewers 2 BOUNDED 2) (Conflicts 2) (ReviewersId 1)
+(Papers 2 BOUNDED 3 3) (Authors 2) (Conflicts 2) (ReviewerBids 2)  (Reviewers 2 BOUNDED 2)  (ReviewerAssignments  2)
 requires
-forall u p b (Reviewers(u, p, b) -> ~ Conflicts(u, p)) &&
-forall u p (Reviews(u, p) -> ~ Conflicts(u, p)) &&
-forall u (exists p (ReviewersId(u) -> Reviewers(u, p)))  
 
-UPDATE Reviewers SET b0=1:2 WHERE Column1 = cpapid  
-AND Column2 IN ( SELECT ReviewersId.Column1 FROM ReviewersId ) ;
+forall x y (ReviewerBids(x,y) -> ~ Conflicts(x,y)) &&
+forall x y (ReviewerAssignments(x,y) -> ~ Conflicts(x,y)) &&
+ReviewerBids(reviewer, assignId)
 
-DELETE FROM Reviewers WHERE Column1 = cpapid AND b0 != 1:2 ;
-
+INSERT INTO ReviewerAssignments VALUES (reviewer, assignId) ;
 
 ensures
- forall u p b (Reviewers(u, p, b) -> ~ Conflicts(u, p)) &&
-forall u p (Reviews(u, p) -> ~ Conflicts(u, p))&&
-forall u (exists p (ReviewersId(u) -> Reviewers(u, p))) 
+forall x y (ReviewerBids(x,y) -> ~ Conflicts(x,y)) &&
+forall x y (ReviewerAssignments(x,y) -> ~ Conflicts(x,y))

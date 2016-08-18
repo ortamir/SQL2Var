@@ -1,13 +1,16 @@
-(Papers 1 BOUNDED 3) (Reviews 2)  (Reviewers 2 BOUNDED 2) (Conflicts 2)
+(Papers 2 BOUNDED 3 3) (Authors 2) (Conflicts 2) (ReviewerBids 2)  (Reviewers 2 BOUNDED 2)  (ReviewerAssignments  2)
 requires
-forall u p b (Reviewers(u, p, b) -> ~ Conflicts(u, p)) &&
-forall u p (Reviews(u, p) -> ~ Conflicts(u, p))
+forall x y (ReviewerBids(x,y) -> ~ Conflicts(x,y)) &&
+forall x y (ReviewerAssignments(x,y) -> ~ Conflicts(x,y))
 
-if (IsEmpty(SELECT Conflicts.Column1 FROM Conflicts WHERE Column1=usid AND Column2=papid))
-  INSERT INTO Reviewers VALUES (usid, papid, 0:2);
+if (IsNotEmpty(SELECT Papers.id FROM Papers WHERE Column1 = currentUser AND NOT (id IN 
+              (SELECT Conflicts.id FROM Conflicts where Column1 = currentUser)) AND Column2 = bidId  ))
+  INSERT INTO ReviewerBids VALUES (currentUser, bidId);
 else
   skip ;
 ;
 ensures
- forall u p b (Reviewers(u, p, b) -> ~ Conflicts(u, p)) &&
-forall u p (Reviews(u, p) -> ~ Conflicts(u, p))
+forall x y (ReviewerBids(x,y) -> ~ Conflicts(x,y)) &&
+forall x y (ReviewerAssignments(x,y) -> ~ Conflicts(x,y))
+
+
