@@ -9,4 +9,4 @@ UPDATE Papers SET b2 = 0:3 WHERE Column1 IN (SELECT Authors.Column2 FROM  Author
 ensures
 forall x y (ReviewerBids(x,y) -> ~ Conflicts(x,y)) &&
 forall x y (ReviewerAssignments(x,y) -> ~ Conflicts(x,y)) &&
-forall id,status,session (Papers(currentUser,id,status,session) -> (session = 0:3 OR session = 1:3))
+forall id,status,session (Papers(currentUser,id,status,session) -> (session = 0:3 || session = 1:3))
