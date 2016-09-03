@@ -1,0 +1,12 @@
+(Papers 2 BOUNDED 3 3) (Authors 2) (Conflicts 2) (ReviewerBids 2)  (Reviewers 2 BOUNDED 2)  (ReviewerAssignments  2)
+requires
+
+forall x y (ReviewerBids(x,y) -> ~ Conflicts(x,y)) &&
+forall x y (ReviewerAssignments(x,y) -> ~ Conflicts(x,y)) &&
+
+UPDATE Papers SET b2 = 0:3 WHERE Column1 IN (SELECT Authors.Column2 FROM  Authors WHERE Column1 = currentUser)
+
+ensures
+forall x y (ReviewerBids(x,y) -> ~ Conflicts(x,y)) &&
+forall x y (ReviewerAssignments(x,y) -> ~ Conflicts(x,y)) &&
+forall id,status,session (Papers(currentUser,id,status,session) -> (session = 0:3 OR session = 1:3))
