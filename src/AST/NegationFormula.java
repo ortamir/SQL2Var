@@ -8,6 +8,7 @@ public class NegationFormula extends Formula {
 	public Formula formula;
 	public NegationFormula(Formula f) {
 		// TODO Auto-generated constructor stub
+		if (f == null) throw new NullPointerException();
 		formula = f;
 	}
 	

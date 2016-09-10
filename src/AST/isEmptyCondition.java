@@ -8,7 +8,7 @@ public class isEmptyCondition extends Condition {
 	
 	public isEmptyCondition(SelectColumn sc) {
 		// TODO Auto-generated constructor stub
-		sc= selectColumn;
+		selectColumn = sc;
 	}
 	
 	public isEmptyCondition(SelectQuery sq) {

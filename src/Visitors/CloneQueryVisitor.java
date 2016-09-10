@@ -24,7 +24,7 @@ import AST.TwoColumns;
 import AST.UpdateQuery;
 import AST.Value;
 import AST.Var;
-import AST.inCondition;
+import AST.InCondition;
 import AST.isEmptyCondition;
 import AST.isNotEmptyCondition;
 
@@ -112,8 +112,8 @@ public class CloneQueryVisitor implements QueryVisitor {
 	}
 
 	@Override
-	public Object visit(inCondition inCondition) {
-		return new inCondition(inCondition.column,(Query)inCondition.sc.accept(this));
+	public Object visit(InCondition inCondition) {
+		return new InCondition(inCondition.column,(Query)inCondition.sc.accept(this));
 	}
 
 	@Override

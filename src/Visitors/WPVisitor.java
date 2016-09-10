@@ -62,7 +62,7 @@ public class WPVisitor implements StatementVisitor {
 			assn = (Formula) assn.accept(new ReplaceVisitor(deleteQuery.table,comp));
 
 		}
-		if(q instanceof InsertQuery){
+		else if (q instanceof InsertQuery) {
 			InsertQuery insertQuery = (InsertQuery)q;
 			Vector<Var> vs1=new Vector<>(),vs2 = new Vector<>();
 			Vector<Var> vs = new Vector<>();
@@ -108,7 +108,7 @@ public class WPVisitor implements StatementVisitor {
 			assn = (Formula) assn.accept(new ReplaceVisitor(insertQuery.table,comp));
 		}
 
-		if(q instanceof UpdateQuery){
+		else if(q instanceof UpdateQuery) {
 			UpdateQuery updateQuery = (UpdateQuery)q;
 			Formula cond = (Formula) updateQuery.condition.accept(new ConditionVisitor());
 			Vector<Var> vs = new Vector<>(),vs1 = new Vector<>(),va = new Vector<>();
@@ -159,6 +159,9 @@ public class WPVisitor implements StatementVisitor {
 			assn.accept(new TiedVarsVisitor(), new HashSet<Var>());
 
 			assn = (Formula) assn.accept(new ReplaceVisitor(updateQuery.table,comp));
+		}
+		else {
+			throw new RuntimeException("query type not implemented (" + q.getClass().getName() + ")");
 		}
 		
 		return assn;

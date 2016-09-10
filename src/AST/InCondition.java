@@ -2,12 +2,12 @@ package AST;
 
 import Visitors.QueryVisitor;
 
-public class inCondition extends Condition {
+public class InCondition extends Condition {
 
 	public Query sc;
 	public String column;
 	
-	public inCondition(String c, Query q) {
+	public InCondition(String c, Query q) {
 		column = c;
 		if (!(q instanceof SelectQuery))
 			throw new RuntimeException("in structure used with more than one column");
@@ -18,8 +18,7 @@ public class inCondition extends Condition {
 
 	@Override
 	public Object accept(QueryVisitor visitor) {
-		// TODO Auto-generated method stub
-		return null;
+		return visitor.visit(this);
 	}
 
 }

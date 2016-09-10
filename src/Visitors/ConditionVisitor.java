@@ -32,7 +32,7 @@ import AST.TwoColumns;
 import AST.UpdateQuery;
 import AST.Value;
 import AST.Var;
-import AST.inCondition;
+import AST.InCondition;
 import AST.isEmptyCondition;
 import AST.isNotEmptyCondition;
 
@@ -43,31 +43,31 @@ public class ConditionVisitor implements QueryVisitor{
 	@Override
 	public Object visit(MoveQuery moveQuery) {
 		// TODO Auto-generated method stub
-		return null;
+		throw new RuntimeException("not implemented");
 	}
 
 	@Override
 	public Object visit(DeleteQuery deleteQuery) {
 		// TODO Auto-generated method stub
-		return null;
+		throw new RuntimeException("not implemented");
 	}
 
 	@Override
 	public Object visit(SelectQuery selectQuery) {
 		// TODO Auto-generated method stub
-		return null;
+		throw new RuntimeException("not implemented");
 	}
 
 	@Override
 	public Object visit(UpdateQuery updateQuery) {
 		// TODO Auto-generated method stub
-		return null;
+		throw new RuntimeException("not implemented");
 	}
 
 	@Override
 	public Object visit(OneColumn oneColumn) {
 		// TODO Auto-generated method stub
-		return null;
+		throw new RuntimeException("not implemented");
 	}
 
 	@Override
@@ -101,19 +101,19 @@ public class ConditionVisitor implements QueryVisitor{
 	@Override
 	public Object visit(StarColumns starColumns) {
 		// TODO Auto-generated method stub
-		return null;
+		throw new RuntimeException("not implemented");
 	}
 
 	@Override
 	public Object visit(TwoColumns twoColumns) {
 		// TODO Auto-generated method stub
-		return null;
+		throw new RuntimeException("not implemented");
 	}
 
 	@Override
 	public Object visit(Value value) {
 		// TODO Auto-generated method stub
-		return null;
+		throw new RuntimeException("not implemented");
 	}
 
 	@Override
@@ -143,7 +143,7 @@ public class ConditionVisitor implements QueryVisitor{
 	@Override
 	public Object visit(Assignment assignment) {
 		// TODO Auto-generated method stub
-		return null;
+		throw new RuntimeException("not implemented");
 	}
 
 	@Override
@@ -205,11 +205,11 @@ public class ConditionVisitor implements QueryVisitor{
 	@Override
 	public Object visit(InsertQuery insertQuery) {
 		// TODO Auto-generated method stub
-		return null;
+		throw new RuntimeException("not implemented");
 	}
 
 	@Override
-	public Object visit(inCondition inCondition) {
+	public Object visit(InCondition inCondition) {
 		
 		Var column;
 		

@@ -18,7 +18,7 @@ import AST.StarColumns;
 import AST.TwoColumns;
 import AST.UpdateQuery;
 import AST.Value;
-import AST.inCondition;
+import AST.InCondition;
 import AST.isEmptyCondition;
 import AST.isNotEmptyCondition;
 
@@ -56,7 +56,7 @@ public interface QueryVisitor {
 
 	Object visit(InsertQuery insertQuery);
 	
-	Object visit(inCondition inCondition);
+	Object visit(InCondition inCondition);
 
 	Object visit(BoolCondition boolCondition);
 

@@ -23,7 +23,7 @@ import AST.TwoColumns;
 import AST.UpdateQuery;
 import AST.Value;
 import AST.Var;
-import AST.inCondition;
+import AST.InCondition;
 import AST.isEmptyCondition;
 import AST.isNotEmptyCondition;
 
@@ -129,7 +129,7 @@ public class FreeVarsQueryVisitor implements QueryVisitor {
 	}
 
 	@Override
-	public Object visit(inCondition inCondition) {
+	public Object visit(InCondition inCondition) {
 		FreeVarsNode f = (FreeVarsNode)inCondition.sc.accept(this);
 		return f.set.remove(new Var("Column1"));
 	}
