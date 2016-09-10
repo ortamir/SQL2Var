@@ -13,6 +13,7 @@ import AST.Formula;
 import AST.InsertQuery;
 import AST.MoveQuery;
 import AST.NEQCondition;
+import AST.NotCondition;
 import AST.OneColumn;
 import AST.OrCondition;
 import AST.Query;
@@ -124,6 +125,12 @@ public class CloneQueryVisitor implements QueryVisitor {
 	public Object visit(NEQCondition neqCondition) {
 		// TODO Auto-generated method stub
 		return new NEQCondition(neqCondition.column,neqCondition.value);
+	}
+
+	@Override
+	public Object visit(NotCondition notCondition) {
+		// TODO Auto-generated method stub
+		return new NotCondition((Condition)notCondition.cond.accept(this));
 	}
 
 }

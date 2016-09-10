@@ -13,6 +13,7 @@ import AST.FreeVarsNode;
 import AST.InsertQuery;
 import AST.MoveQuery;
 import AST.NEQCondition;
+import AST.NotCondition;
 import AST.OneColumn;
 import AST.OrCondition;
 import AST.SelectColumn;
@@ -138,6 +139,11 @@ public class FreeVarsQueryVisitor implements QueryVisitor {
 		// TODO Auto-generated method stub
 		FreeVarsNode f = new FreeVarsNode(new HashSet<>());
 		return f;
+	}
+
+	@Override
+	public Object visit(NotCondition notCondition) {
+		return (FreeVarsNode) notCondition.cond.accept(this);
 	}
 
 }

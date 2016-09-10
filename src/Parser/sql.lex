@@ -43,6 +43,7 @@ NUMBER=[1-9][0-9]*|[0]
 "WHERE" 		{ return new Token(yyline, yytext(), SqlSym.WHERE); }
 "AND" 			{ return new Token(yyline, yytext(), SqlSym.AND); }
 "OR" 			{ return new Token(yyline, yytext(), SqlSym.OR); }
+"NOT" 			{ return new Token(yyline, yytext(), SqlSym.NOT); }
 "IsEmpty" 		{ return new Token(yyline, yytext(), SqlSym.ISEMPTY); }
 "IsNotEmpty"	{ return new Token(yyline, yytext(), SqlSym.ISNOTEMPTY); }
 "SET" 			{ return new Token(yyline, yytext(), SqlSym.SET); }

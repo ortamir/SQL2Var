@@ -1,6 +1,6 @@
 package Visitors;
 
-import AST.AndCondition;
+import AST.*;
 import AST.Assignment;
 import AST.BoolCondition;
 import AST.DeleteQuery;
@@ -9,6 +9,7 @@ import AST.Formula;
 import AST.InsertQuery;
 import AST.MoveQuery;
 import AST.NEQCondition;
+import AST.NotCondition;
 import AST.OneColumn;
 import AST.OrCondition;
 import AST.SelectColumn;
@@ -60,4 +61,6 @@ public interface QueryVisitor {
 	Object visit(BoolCondition boolCondition);
 
 	Object visit(NEQCondition neqCondition);
+
+	Object visit(NotCondition notCondition);
 }

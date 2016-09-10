@@ -18,6 +18,7 @@ import AST.InsertQuery;
 import AST.MoveQuery;
 import AST.NEQCondition;
 import AST.NegationFormula;
+import AST.NotCondition;
 import AST.OneColumn;
 import AST.OrCondition;
 import AST.OrFormula;
@@ -264,5 +265,11 @@ public class ConditionVisitor implements QueryVisitor{
 				}
 				vec.add(neqCondition.value);
 				return new NegationFormula( new RelationFormula(new Relation("=",vec)));
+	}
+
+	@Override
+	public Object visit(NotCondition notCondition) {
+		// TODO Auto-generated method stub
+		return new NegationFormula((Formula)notCondition.cond.accept(this));
 	}
 }

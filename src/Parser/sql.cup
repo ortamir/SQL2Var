@@ -360,6 +360,9 @@ cond ::= ISNOTEMPTY LPAREN selectCol:sc RPAREN
 cond ::= ID:c IN LPAREN query:q RPAREN
     {: RESULT = new inCondition(c,q); :};
     
+cond ::= NOT LPAREN cond:c RPAREN
+    {: RESULT = new NotCondition(c); :};
+
 
 selectCol ::= SELECT ID:t DOT ID:col FROM ID:t2 WHERE cond:c
 	{: RESULT = new SelectColumn(t,col,t2,c); :} ;
