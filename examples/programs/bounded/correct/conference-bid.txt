@@ -5,9 +5,9 @@ forall x y (ReviewerAssignments(x,y) -> ~ Conflicts(x,y))
 
 if (
 IsNotEmpty(
-            SELECT Papers.id FROM Papers WHERE Column1 = currentUser AND NOT 
+            SELECT Papers.Coulmn2 FROM Papers WHERE Column1 = currentUser AND NOT 
             (id IN 
-              (SELECT Conflicts.id FROM Conflicts WHERE Column1 = currentUser)
+              (SELECT Conflicts.Coulmn2 FROM Conflicts WHERE Column1 = currentUser)
             ) AND Column2 = bidId  ))
   INSERT INTO ReviewerBids VALUES (currentUser, bidId);
 else
