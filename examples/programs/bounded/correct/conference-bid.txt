@@ -3,12 +3,9 @@ requires
 forall x y (ReviewerBids(x,y) -> ~ Conflicts(x,y)) &&
 forall x y (ReviewerAssignments(x,y) -> ~ Conflicts(x,y))
 
-if (
-IsNotEmpty(
-            SELECT Papers.Coulmn2 FROM Papers WHERE Column1 = currentUser AND NOT 
-            (id IN 
-              (SELECT Conflicts.Coulmn2 FROM Conflicts WHERE Column1 = currentUser)
-            ) AND Column2 = bidId  ))
+/* get-papers(currentUser) := exists y z w (Papers(x,y,z,w) & ~ Conflicts(currentUser, x) */
+
+if (. exists x (exists y z w (Papers(x,y,z,w) & ~ Conflicts(currentUser, x)) & x = bidId ))
   INSERT INTO ReviewerBids VALUES (currentUser, bidId);
 else
   skip ;
