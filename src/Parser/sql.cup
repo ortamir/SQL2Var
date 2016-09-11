@@ -110,6 +110,7 @@ stmt ::= ID:v EQ query:q
 	:}
 ;
 
+
 stmt ::= IF LPAREN ISEMPTY LPAREN query:q RPAREN RPAREN stmts:s1 ELSE stmts:s2 
 	{:
 		RESULT = new IfSTMT(0,q,s1,s2);	
@@ -139,6 +140,13 @@ stmt ::= IF LPAREN ID:v EQ term:n RPAREN stmts:s1 ELSE stmts:s2
 		RESULT = new IfSTMT(3,v,n,s1,s2);	
 	:}
 ;
+
+stmt ::= IF LPAREN DOT formula:f RPAREN stmts:s1 ELSE stmts:s2 // inserted DOT to avoid conflicts
+	{:
+		RESULT = new IfSTMT(4,f,s1,s2);	
+	:}
+;
+
 
 stmt ::= ID:v EQ CHOOSE query:q 
 	{:
@@ -358,7 +366,7 @@ cond ::= ISNOTEMPTY LPAREN selectCol:sc RPAREN
 	{: RESULT = new isNotEmptyCondition(sc); :};
 
 cond ::= ID:c IN LPAREN query:q RPAREN
-    {: RESULT = new inCondition(c,q); :};
+    {: RESULT = new InCondition(c,q); :};
     
 cond ::= NOT LPAREN cond:c RPAREN
     {: RESULT = new NotCondition(c); :};

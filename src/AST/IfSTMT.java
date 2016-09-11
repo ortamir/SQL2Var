@@ -10,6 +10,7 @@ public class IfSTMT extends Stmt {
 	public Query query;
 	public String var;
 	public Var val;
+	public Formula f;
 	
 	
 	public IfSTMT(int i, Query q, Vector<Stmt> th, Vector<Stmt> el) {//type 0 or 1
@@ -24,6 +25,14 @@ public class IfSTMT extends Stmt {
 		type = i;
 		this.var = v;
 		this.val = n;
+		trueStmts = s1;
+		falseStmts = s2;
+	}
+	
+	
+	public IfSTMT(int i, Formula f, Vector<Stmt> s1, Vector<Stmt> s2) { //type 4
+		type = i;
+		this.f = f;
 		trueStmts = s1;
 		falseStmts = s2;
 	}

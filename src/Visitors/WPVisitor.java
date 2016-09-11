@@ -203,7 +203,11 @@ public class WPVisitor implements StatementVisitor {
 			vs.add(ifSTMT.val);
 			cond = new RelationFormula(new Relation("=", vs));
 			break;
+		case 4:
+		    cond = ifSTMT.f;
+			break;
 		}
+		
 		
 		Formula trueBranch = Q;
 		for (AST.Stmt stmt : reversed(ifSTMT.trueStmts)) {
