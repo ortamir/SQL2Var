@@ -1,10 +1,12 @@
 package AST;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.Vector;
 
 public class Schema {
@@ -105,6 +107,24 @@ public static Vector<Integer> getTableBoundedColumns(String table) {
 	if(td == null)
 		throw new RuntimeException("no table found!"+table);
 	return td.boundedColumns;
+}
+
+public static Set<Integer> getAllBoundedDomains() {
+	Set<Integer> s = new HashSet<>();
+	for (TableDef tbl : tables.values())
+		for (Integer dom : tbl.boundedColumns)
+			s.add(dom);
+	return s;
+}
+	
+public static String getAllBoundedDomainDefs() {
+	String ret="";
+	for (Integer d : getAllBoundedDomains()) {
+		ret += "(declare-datatypes () ((B$" + d;
+		for (int i = 0 ; i < d ; i ++) ret += " _" + i + "@" + d;
+		ret += ")))\n";
+	}
+	return ret;
 }
 
 public static String getAllBlastedTableDefs() {

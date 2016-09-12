@@ -1,12 +1,14 @@
-(Papers 2 BOUNDED 3 3) (Authors 2) (Conflicts 2) (ReviewerBids 2)  (Reviewers 2 BOUNDED 2)  (ReviewerAssignments  2)
+(Papers 2 BOUNDED 3 5) (Authors 2) (Conflicts 2) (ReviewerBids 2)  (Reviewers 2 BOUNDED 2)  (ReviewerAssignments  2) (Out 1 BOUNDED 5)
 requires
 
 forall x y (ReviewerBids(x,y) -> ~ Conflicts(x,y)) &&
-forall x y (ReviewerAssignments(x,y) -> ~ Conflicts(x,y))
+forall x y (ReviewerAssignments(x,y) -> ~ Conflicts(x,y)) &&
+forall x y (Out(x,y) <-> exists z w (Papers(x, z, w, y) & Authors(currentUser, x)))
 
-UPDATE Papers SET b1 = 0:3 WHERE Column1 IN (SELECT Authors.Column2 FROM  Authors WHERE Column1 = currentUser) ;
+UPDATE Out SET b0 = 0:5 WHERE b0 = 2:5 OR b0 = 3:5 OR b0 = 4:5;
+//Column1 IN (SELECT Authors.Column2 FROM  Authors WHERE Column1 = currentUser) ;
 
 ensures
 forall x y (ReviewerBids(x,y) -> ~ Conflicts(x,y)) &&
 forall x y (ReviewerAssignments(x,y) -> ~ Conflicts(x,y)) &&
-forall id status session (Papers(currentUser,id,status,session) -> (session = 0:3 || session = 1:3))
+forall title session (Out(title,session) -> (session = 0:5 || session = 1:5))

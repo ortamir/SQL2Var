@@ -54,8 +54,14 @@ public class ConditionVisitor implements QueryVisitor{
 
 	@Override
 	public Object visit(SelectQuery selectQuery) {
-		// TODO Auto-generated method stub
-		throw new RuntimeException("not implemented");
+		if (selectQuery.columns instanceof OneColumn) {
+			return visit(
+				new SelectColumn(selectQuery.table, ((OneColumn)selectQuery.columns).column, null /* TODO this does not seem to be used? */, selectQuery.condition));
+		}
+		else {
+			// TODO Auto-generated method stub
+			throw new RuntimeException("not implemented");
+		}
 	}
 
 	@Override

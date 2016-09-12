@@ -115,29 +115,38 @@ public class WPVisitor implements StatementVisitor {
 			Formula comp;
 			Map<Var,Var> m =new HashMap<>();
 			Var a1 = new Var(IdGenerator.getFreshId());
+			Var var = null;
 			switch(Schema.checkTableArity(updateQuery.table)){
 			case 1:
 				vs.add(new Var("alpha"));
 				Utils.addLimitedVariables(updateQuery.table, vs);
-				vs1.add(new Var("alpha"));
-				vs1.add(updateQuery.assignment.value);
 				va.add(a1); 
-				m.put(new Var("alpha"), a1);  // TODO NOT good! perhaps it's a bounded column?
+				switch(updateQuery.assignment.column) {
+					case "Column1": var = vs.get(0); break;
+					case "b0": if (vs.size() > 1) var = vs.get(1); break;
+					case "b1": if (vs.size() > 2) var = vs.get(2); break;   // TODO generalize!
+				}
+				if (var == null) {
+					throw new RuntimeException("no such column '" + updateQuery.assignment.column + "' in table '" + updateQuery.table + "'");
+				}
+				vs1.add(var);
+				m.put(var, a1);
+				a1.limit = var.limit;
+				vs1.add(updateQuery.assignment.value);
 				break;
 			case 2:
 				vs.add(new Var("alpha"));
 				vs.add(new Var("beta"));
 				Utils.addLimitedVariables(updateQuery.table, vs);
 				va.add(a1);
-				Var var = null;
 				switch(updateQuery.assignment.column){
-				case "Column1": var = vs.get(0); break;
-				case "Column2": var = vs.get(1); break;
-				case "b0": var = vs.get(2); break;
-				case "b1": var = vs.get(3); break;   // TODO generalize!
-				
-				default:
-					throw new RuntimeException("unknown column name: '" + updateQuery.assignment.column + "'");
+					case "Column1": var = vs.get(0); break;
+					case "Column2": var = vs.get(1); break;
+					case "b0": if (vs.size() > 1) var = vs.get(1); break;
+					case "b1": if (vs.size() > 2) var = vs.get(2); break;   // TODO generalize!
+				}
+				if (var == null) {
+					throw new RuntimeException("no such column '" + updateQuery.assignment.column + "' in table '" + updateQuery.table + "'");
 				}
 				vs1.add(var);
 				m.put(var, a1);

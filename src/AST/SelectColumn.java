@@ -8,10 +8,10 @@ public class SelectColumn extends QueryASTNode{
 	public String column;
 	public Condition condition;
 	public SelectColumn(String t, String col, String t2, Condition c) {
-		// TODO Auto-generated constructor stub
 		table = t;
 		column = col;
 		condition = c;
+		/* TODO what is t2 and why is it not used? */
 	}
 	
 	public Object accept(QueryVisitor visitor) {

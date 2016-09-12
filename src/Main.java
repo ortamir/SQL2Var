@@ -4,9 +4,6 @@ import java.io.FileReader;
 import java.io.PrintWriter;
 import java.io.Reader;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -95,17 +92,20 @@ public class Main {
 						check.accept(new FormulaTypeVisitor());
 					}
 
-					Set<Var> free = ((FreeVarsNode)check.accept(new FreeVarsVisitor())).set;
-					String out ="(declare-sort V 0)\n(declare-datatypes () ((B$2 _0@2 _1@2) (B$3 _0@3 _1@3 _2@3)))\n";
+					// Declare sorts
+					String out ="(declare-sort V 0)\n";
+					out += Schema.getAllBoundedDomainDefs();
+					
+					// Declare functions
 					for(Entry<String,TableDef> e : Schema.tables.entrySet()) {
 						String sig = String.join(" ", e.getValue().signature());
 						out+="(declare-fun "+e.getKey()+" ("+sig+") Bool)\n";
 					}
 					
-					String s=Schema.getAllBlastedTableDefs();
-					//out += HARD_CODED_DECLARATIONS;
-					out += s;
+					out += Schema.getAllBlastedTableDefs();
 					
+					// Declare variables
+					Set<Var> free = ((FreeVarsNode)check.accept(new FreeVarsVisitor())).set;
 					for(Var v : free) {
 						if (!v.isNumeral()) {
 							String sort = TableDef.sortForSize(v.limit);
@@ -124,6 +124,7 @@ public class Main {
 						check.accept(new MakeOnly2Visitor(), null);
 					}
 
+					// Assert verification condition
 					String str= "(assert "+((StringNode)check.accept(new PrinterVisitor(collateRelations))).str+ " )";
 					out += str + "\n";
 					out += "(check-sat)\n";
