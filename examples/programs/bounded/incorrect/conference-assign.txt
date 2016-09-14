@@ -1,0 +1,11 @@
+(Papers 2 BOUNDED 3 5) (Authors 2) (Conflicts 2) (ReviewerBids 2)  (Reviewers 2 BOUNDED 2)  (ReviewerAssignments  2)
+requires
+
+forall x y (ReviewerAssignments(x,y) -> ~ Conflicts(x,y)) &&
+ReviewerBids(reviewer, assignId)
+
+INSERT INTO ReviewerAssignments VALUES (reviewer, assignId) ;
+
+ensures
+forall x y (ReviewerBids(x,y) -> ~ Conflicts(x,y)) &&
+forall x y (ReviewerAssignments(x,y) -> ~ Conflicts(x,y))
