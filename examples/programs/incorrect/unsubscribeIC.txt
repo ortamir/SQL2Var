@@ -3,6 +3,6 @@ requires forall u (Users(u) -> exists nl (Subscriptions(nl,u)))
      & forall u nl (Subscriptions(nl,u) -> Users(u))
      & exists nl (forall u (Users(u) -> Subscriptions(nl,u)))
      
-DELETE FROM Subscriptions WHERE Column1=eventNewsletter AND Column2=eventUser     
+DELETE FROM Subscriptions WHERE Column1=eventNewsletter AND Column2=eventUser ;
 
 ensures exists nl (forall u (Users(u) -> Subscriptions(nl,u)))

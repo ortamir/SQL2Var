@@ -8,7 +8,7 @@ if (IsNotEmpty(SELECT NS.b0 FROM NS WHERE b1 = cd))  //"No such code"
      flag = CHOOSE SELECT NS.b0 FROM NS WHERE b1 = cd;
      if (subgho = 0:2) 
           UPDATE NS SET b0 = 1:2 WHERE b1 = cd;
-          UPDATE NS SET b1 = 0:3 WHERE b1 = cd;
+          UPDATE NS SET b1 = 0:3 WHERE b1 = cd;   // bug: "= 0:2 0:3"
      else 
           DELETE FROM NS WHERE b1 = cd;
      ;

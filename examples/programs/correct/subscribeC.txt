@@ -1,8 +1,10 @@
 (Users 1) (Subscriptions 2)
-requires forall u2 ((forall nl2 (Subscriptions(nl2,u2))) -> (exists nl1 (Subscriptions(nl1,u2))))
+//requires forall u2 ((forall nl2 (Subscriptions(nl2,u2))) -> (exists nl1 (Subscriptions(nl1,u2))))
+requires exists x (~(x = newsletter) & forall y (Users(y) -> Subscriptions(x, y)))
 
-INSERT INTO Subscriptions VALUES (news_letter,user) 
+INSERT INTO Subscriptions VALUES (newsletter,user) ;
 
-ensures forall u2 ((forall nl2 (Subscriptions(nl2,u2))) -> (exists nl1 (Subscriptions(nl1,u2))))
+ensures forall u (Users(u) -> exists x (Subscriptions(x, u)))
+//ensures forall u2 ((forall nl2 (Subscriptions(nl2,u2))) -> (exists nl1 (Subscriptions(nl1,u2))))
 
 

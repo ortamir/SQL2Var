@@ -1,8 +1,10 @@
 (Users 1) (Subscriptions 2)
-requires forall u (Users(u) -> exists nl (Subscriptions(nl,u)))
-     & forall u nl (Subscriptions(nl,u) -> Users(u))
-     & exists nl ((forall u (Users(u) -> Subscriptions(nl,u))) & ~(nl == eventNewsletter))
+/*requires forall u (Users(u) -> exists nl (Subscriptions(nl,u)))
+       & forall u nl (Subscriptions(nl,u) -> Users(u))
+       & exists nl ((forall u (Users(u) -> Subscriptions(nl,u))) & ~(nl = eventNewsletter)) */
+requires exists x (~(x = newsletter) & forall y (Users(y) -> Subscriptions(x, y)))
      
-DELETE FROM Subscriptions WHERE Column1=eventNewsletter AND Column2=eventUser     
+DELETE FROM Subscriptions WHERE Column1=newsletter AND Column2=user ;
 
-ensures exists nl (forall u (Users(u) -> Subscriptions(nl,u)))
+ensures forall u (Users(u) -> exists x (Subscriptions(x, u)))
+/* ensures exists nl (forall u (Users(u) -> Subscriptions(nl,u))) */

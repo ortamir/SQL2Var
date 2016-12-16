@@ -5,7 +5,7 @@ forall u nl (Subscriptions(nl,u)-> Letter(nl)) &
 forall u (User(u) -> (exists nl (Subscriptions(nl,u)))) &
 forall nl (Letter(nl) -> (exists u (Subscriptions(nl,u))))
 
-INSERT INTO Subscriptions VALUES (news_letter,user) 
+INSERT INTO Subscriptions VALUES (newsletter,user) ;
 
 ensures exists nl (forall u (exists nl (Subscriptions(nl,u)) ->  Subscriptions(nl,u)))
 

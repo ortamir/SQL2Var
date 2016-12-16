@@ -5,3 +5,4 @@ src/Parser/SqlSym.java
 /bin
 .dropbox
 .DS_Store
+/examples/programs/**/*.smt2

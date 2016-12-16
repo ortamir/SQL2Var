@@ -3,7 +3,9 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.PrintWriter;
 import java.io.Reader;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -32,6 +34,7 @@ public class Main {
 			options.addOption(Option.builder().longOpt("path").hasArg().build());
 			options.addOption(Option.builder().longOpt("collate").build());
 			options.addOption(Option.builder().longOpt("no-blast").build());
+			options.addOption(Option.builder().longOpt("repeat").hasArg().type(Number.class).build());
 
 			return new DefaultParser().parse(options, args);
 		}
@@ -41,9 +44,15 @@ public class Main {
 			return null;
 		}
 	}
+	
+	static int getIntOptionValue(CommandLine cmdline, String opt, int defaultValue) throws ParseException {
+		Object o = cmdline.getParsedOptionValue(opt);
+		if (o == null) return defaultValue;
+		else return ((Number)o).intValue();
+	}
 			
 	
-	public static void main(String [] args){
+	public static void main(String [] args) throws ParseException {
 		CommandLine opts = cmdline(args);
 		
 		File path = new File(opts.getOptionValue("path", ".")); // "C:\\Users\\admin\\Dropbox\\programs\\bounded\\";
@@ -51,6 +60,7 @@ public class Main {
 		
 		boolean collateRelations = opts.hasOption("collate");
 		boolean blastVars = !opts.hasOption("no-blast");
+		int repeat = getIntOptionValue(opts, "repeat", 1);
 		//int [] mul = {1,10,100,1000};
 
 		//convert(path+"correct\\networkC.txt", 2);
@@ -105,8 +115,8 @@ public class Main {
 					out += Schema.getAllBlastedTableDefs();
 					
 					// Declare variables
-					Set<Var> free = ((FreeVarsNode)check.accept(new FreeVarsVisitor())).set;
-					for(Var v : free) {
+					Set<Var> freevars = ((FreeVarsNode)check.accept(new FreeVarsVisitor())).set;
+					for(Var v : freevars) {
 						if (!v.isNumeral()) {
 							String sort = TableDef.sortForSize(v.limit);
 							out += "(declare-const "+v.name+" "+sort+")\n";
@@ -124,15 +134,38 @@ public class Main {
 						check.accept(new MakeOnly2Visitor(), null);
 					}
 
+					// rename free vars to make duplicates
+					if (repeat > 1) {
+						List<Formula> disj = new ArrayList<>();
+						for (int i = 0; i < repeat; i++) {
+							Map<Var,Var> dupvars = new HashMap<Var,Var>();
+							for (Var v : freevars) {
+								if (!v.isNumeral()) {
+									Var vi = new Var(v.name + "$_" + i, v.limit);
+									dupvars.put(v, vi);
+									String sort = TableDef.sortForSize(vi.limit);
+									out += "(declare-const "+vi.name+" "+sort+")\n";
+								}
+							}
+							
+							disj.add((Formula) check.accept(new RenameVisitor(dupvars)));
+						}
+						
+						check = null;
+						for (Formula d : disj) check = (check == null) ? d : new OrFormula(check, d);
+					}
+					
 					// Assert verification condition
-					String str= "(assert "+((StringNode)check.accept(new PrinterVisitor(collateRelations))).str+ " )";
-					out += str + "\n";
+					String smt_assert = "(assert "+((StringNode)check.accept(new PrinterVisitor(collateRelations))).str+ " )";
+					out += smt_assert + "\n";
 					out += "(check-sat)\n";
 					out += "(get-model)\n";
 					System.out.println(out);
 					//System.out.println(mul);
 					//PrintWriter outFiles = new PrintWriter(filename.substring(0, filename.length()-4)+"x"+mul+".smt2");
 					String outFilename = file.getPath().replaceFirst("(.txt)?$", ".smt2");
+					if (repeat > 1)
+						outFilename = outFilename.replaceFirst("(\\.[^.]+)?$", "-x" + repeat + "$1");
 					try {
 						PrintWriter outFiles = new PrintWriter(outFilename);
 						outFiles.println(out);
